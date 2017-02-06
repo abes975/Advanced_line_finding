@@ -131,174 +131,174 @@ This process gray image
 def process_gray(img, mtx, dist):
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     undistorted = cv2.undistort(gray, mtx, dist, None, mtx)
-    gray_images = []
-    thresholded_img = []
-    non_thresholeded = [ ('Original', img), ('Gray',gray)]
+    #gray_images = []
+    #thresholded_img = []
+    #non_thresholeded = [ ('Original', img), ('Gray',gray)]
     abs_sobel = absolute_sobel_thresh(undistorted, 'x', thresh=(30,120))
-    gray_images.append(('Sobel X', abs_sobel))
+    #gray_images.append(('Sobel X', abs_sobel))
     mag_threshold = magnitude_thresh(undistorted, thresh=(30, 120))
-    gray_images.append(('Magnitude ', mag_threshold))
+    #gray_images.append(('Magnitude ', mag_threshold))
     dir_threshold = direction_thresh(undistorted, sobel_kernel=15, thresh=(0.7, 1.3))
-    gray_images.append(('Direction', dir_threshold))
+    #gray_images.append(('Direction', dir_threshold))
     combined = np.zeros_like(gray)
     combined[(abs_sobel == 1) | (mag_threshold == 1) & (dir_threshold == 1)] = 1
-    gray_images.append(('Combined', combined))
-    thresholded_img.append(gray_images)
-    display_result(non_thresholeded, thresholded_img)
+    #gray_images.append(('Combined', combined))
+    #thresholded_img.append(gray_images)
+    #display_result(non_thresholeded, thresholded_img)
     return combined
 '''
 This process single channel in BGR image
 '''
 def process_brg(img, mtx, dist):
     undistorted = cv2.undistort(img, mtx, dist, None, mtx)
-    B = undistorted[:,:,0]
-    G = undistorted[:,:,1]
+    #B = undistorted[:,:,0]
+    #G = undistorted[:,:,1]
     R = undistorted[:,:,2]
-    thresholded_img = []
-    R_list = []
-    G_list = []
-    B_list = []
-    non_thresholeded = [ ('Original', img), ('Blu Chan',B),
-                        ('Green Chan', G), ('Red Chan', R)]
+    #thresholded_img = []
+    #R_list = []
+    #G_list = []
+    #B_list = []
+    #non_thresholeded = [ ('Original', img), ('Blu Chan',B),
+    #                    ('Green Chan', G), ('Red Chan', R)]
 
-    abs_sobel_B = absolute_sobel_thresh(B, 'x', thresh=(20,150))
-    abs_sobel_G = absolute_sobel_thresh(G, 'x', thresh=(20,150))
+    #abs_sobel_B = absolute_sobel_thresh(B, 'x', thresh=(20,150))
+    #abs_sobel_G = absolute_sobel_thresh(G, 'x', thresh=(20,150))
     abs_sobel_R = absolute_sobel_thresh(R, 'x', thresh=(20,150))
-    B_list.append(('Sobel B', abs_sobel_B))
-    G_list.append(('Sobel G', abs_sobel_G))
-    R_list.append(('Sobel R', abs_sobel_R))
+    #B_list.append(('Sobel B', abs_sobel_B))
+    #G_list.append(('Sobel G', abs_sobel_G))
+    #R_list.append(('Sobel R', abs_sobel_R))
 
-    mag_threshold_B = magnitude_thresh(B, thresh=(20, 150))
-    mag_threshold_G = magnitude_thresh(G, thresh=(20, 150))
+    #mag_threshold_B = magnitude_thresh(B, thresh=(20, 150))
+    #mag_threshold_G = magnitude_thresh(G, thresh=(20, 150))
     mag_threshold_R = magnitude_thresh(R, thresh=(20, 150))
-    B_list.append(('Magnitude B', mag_threshold_B))
-    G_list.append(('Magnitude G', mag_threshold_G))
-    R_list.append(('Magnitude R', mag_threshold_R))
+    #B_list.append(('Magnitude B', mag_threshold_B))
+    #G_list.append(('Magnitude G', mag_threshold_G))
+    #R_list.append(('Magnitude R', mag_threshold_R))
 
-    dir_threshold_B = direction_thresh(B, sobel_kernel=15, thresh=(0.7, 1.2))
-    dir_threshold_G = direction_thresh(G, sobel_kernel=15, thresh=(0.7, 1.2))
+    #dir_threshold_B = direction_thresh(B, sobel_kernel=15, thresh=(0.7, 1.2))
+    #dir_threshold_G = direction_thresh(G, sobel_kernel=15, thresh=(0.7, 1.2))
     dir_threshold_R = direction_thresh(R, sobel_kernel=15, thresh=(0.7, 1.2))
-    B_list.append(('Direction B', dir_threshold_B))
-    G_list.append(('Direction G', dir_threshold_G))
-    R_list.append(('Direction R', dir_threshold_R))
+    #B_list.append(('Direction B', dir_threshold_B))
+    #G_list.append(('Direction G', dir_threshold_G))
+    #R_list.append(('Direction R', dir_threshold_R))
 
     combined_R = np.zeros_like(dir_threshold_R)
     combined_R[ (abs_sobel_R == 1) | ((mag_threshold_R == 1) & (dir_threshold_R == 1))] = 1
-    combined_G = np.zeros_like(dir_threshold_G)
-    combined_G[ (abs_sobel_G == 1) | ((mag_threshold_G == 1) & (dir_threshold_G == 1))] = 1
-    combined_B = np.zeros_like(dir_threshold_B)
-    combined_B[ (abs_sobel_B == 1) | ((mag_threshold_B == 1) & (dir_threshold_B == 1))] = 1
-    R_list.append(('Combined R', combined_R))
-    G_list.append(('Combined G', combined_G))
-    B_list.append(('Combined B', combined_B))
+    #combined_G = np.zeros_like(dir_threshold_G)
+    #combined_G[ (abs_sobel_G == 1) | ((mag_threshold_G == 1) & (dir_threshold_G == 1))] = 1
+    #combined_B = np.zeros_like(dir_threshold_B)
+    #combined_B[ (abs_sobel_B == 1) | ((mag_threshold_B == 1) & (dir_threshold_B == 1))] = 1
+    #R_list.append(('Combined R', combined_R))
+    #G_list.append(('Combined G', combined_G))
+    #B_list.append(('Combined B', combined_B))
 
-    thresholded_img.append(B_list)
-    thresholded_img.append(G_list)
-    thresholded_img.append(R_list)
-    display_result(non_thresholeded, thresholded_img)
+    #thresholded_img.append(B_list)
+    #thresholded_img.append(G_list)
+    #thresholded_img.append(R_list)
+    #display_result(non_thresholeded, thresholded_img)
     return combined_R
 
 
 def process_hls(img, mtx, dist):
     undistorted = cv2.undistort(img, mtx, dist, None, mtx)
     hls = cv2.cvtColor(undistorted, cv2.COLOR_RGB2HLS)
-    H = hls[:,:,0]
-    L = hls[:,:,1]
+    #H = hls[:,:,0]
+    #L = hls[:,:,1]
     S = hls[:,:,2]
-    thresholded_img = []
-    H_list = []
-    S_list = []
-    L_list = []
-    non_thresholeded = [ ('Original', img), ('H Chan',H),
-                        ('L Chan', L), ('S Chan', S)]
+    #thresholded_img = []
+    #H_list = []
+    #S_list = []
+    #L_list = []
+    #non_thresholeded = [ ('Original', img), ('H Chan',H),
+    #                    ('L Chan', L), ('S Chan', S)]
 
-    abs_sobel_H = absolute_sobel_thresh(H, 'x', thresh=(20,150))
-    abs_sobel_L = absolute_sobel_thresh(L, 'x', thresh=(20,150))
+    #abs_sobel_H = absolute_sobel_thresh(H, 'x', thresh=(20,150))
+    #abs_sobel_L = absolute_sobel_thresh(L, 'x', thresh=(20,150))
     abs_sobel_S = absolute_sobel_thresh(S, 'x', thresh=(20,150))
-    H_list.append(('Sobel H', abs_sobel_H))
-    L_list.append(('Sobel L', abs_sobel_L))
-    S_list.append(('Sobel S', abs_sobel_S))
+    #H_list.append(('Sobel H', abs_sobel_H))
+    #L_list.append(('Sobel L', abs_sobel_L))
+    #S_list.append(('Sobel S', abs_sobel_S))
 
-    mag_threshold_H = magnitude_thresh(H, thresh=(20, 150))
-    mag_threshold_L = magnitude_thresh(L, thresh=(20, 150))
+    #mag_threshold_H = magnitude_thresh(H, thresh=(20, 150))
+    #mag_threshold_L = magnitude_thresh(L, thresh=(20, 150))
     mag_threshold_S = magnitude_thresh(S, thresh=(20, 150))
-    H_list.append(('Magnitude H', mag_threshold_H))
-    L_list.append(('Magnitude L', mag_threshold_H))
-    S_list.append(('Magnitude S', mag_threshold_S))
+    #H_list.append(('Magnitude H', mag_threshold_H))
+    #L_list.append(('Magnitude L', mag_threshold_H))
+    #S_list.append(('Magnitude S', mag_threshold_S))
 
-    dir_threshold_H = direction_thresh(H, sobel_kernel=15, thresh=(0.7, 1.2))
-    dir_threshold_L = direction_thresh(L, sobel_kernel=15, thresh=(0.7, 1.2))
+    #dir_threshold_H = direction_thresh(H, sobel_kernel=15, thresh=(0.7, 1.2))
+    #dir_threshold_L = direction_thresh(L, sobel_kernel=15, thresh=(0.7, 1.2))
     dir_threshold_S = direction_thresh(S, sobel_kernel=15, thresh=(0.7, 1.2))
-    H_list.append(('Direction H', dir_threshold_H))
-    L_list.append(('Direction L', dir_threshold_H))
+    #H_list.append(('Direction H', dir_threshold_H))
+    #L_list.append(('Direction L', dir_threshold_H))
     S_list.append(('Direction S', dir_threshold_S))
 
 
     combined_S = np.zeros_like(dir_threshold_S)
     combined_S[ (abs_sobel_S == 1) | ((mag_threshold_S == 1) & (dir_threshold_S == 1))] = 1
-    combined_H = np.zeros_like(dir_threshold_H)
-    combined_H[ (abs_sobel_H == 1) | ((mag_threshold_H == 1) & (dir_threshold_H == 1))] = 1
-    combined_L = np.zeros_like(dir_threshold_L)
-    combined_L[ (abs_sobel_L == 1) | ((mag_threshold_L == 1) & (dir_threshold_L == 1))] = 1
-    H_list.append(('Combined H', combined_H))
-    L_list.append(('Combined L', combined_L))
-    S_list.append(('Combined S', combined_S))
-    thresholded_img.append(H_list)
-    thresholded_img.append(L_list)
-    thresholded_img.append(S_list)
+    #combined_H = np.zeros_like(dir_threshold_H)
+    #combined_H[ (abs_sobel_H == 1) | ((mag_threshold_H == 1) & (dir_threshold_H == 1))] = 1
+    #combined_L = np.zeros_like(dir_threshold_L)
+    #combined_L[ (abs_sobel_L == 1) | ((mag_threshold_L == 1) & (dir_threshold_L == 1))] = 1
+    #H_list.append(('Combined H', combined_H))
+    #L_list.append(('Combined L', combined_L))
+    #S_list.append(('Combined S', combined_S))
+    #thresholded_img.append(H_list)
+    #thresholded_img.append(L_list)
+    #thresholded_img.append(S_list)
 
-    display_result(non_thresholeded, thresholded_img)
+    #display_result(non_thresholeded, thresholded_img)
     return combined_S
 
 def process_hsv(img, mtx, dist):
     undistorted = cv2.undistort(img, mtx, dist, None, mtx)
     hsv = cv2.cvtColor(undistorted, cv2.COLOR_RGB2HSV)
-    H = hsv[:,:,0]
-    S = hsv[:,:,1]
+    #H = hsv[:,:,0]
+    #S = hsv[:,:,1]
     V = hsv[:,:,2]
-    thresholded_img = []
-    H_list = []
-    S_list = []
+    #thresholded_img = []
+    #H_list = []
+    #S_list = []
     V_list = []
-    non_thresholeded = [ ('Original', img), ('H Chan',H),
-                        ('S Chan', S), ('V Chan', V)]
+    #non_thresholeded = [ ('Original', img), ('H Chan',H),
+    #                    ('S Chan', S), ('V Chan', V)]
 
-    abs_sobel_H = absolute_sobel_thresh(H, 'x', thresh=(20,150))
-    abs_sobel_S = absolute_sobel_thresh(S, 'x', thresh=(20,150))
+    #abs_sobel_H = absolute_sobel_thresh(H, 'x', thresh=(20,150))
+    #abs_sobel_S = absolute_sobel_thresh(S, 'x', thresh=(20,150))
     abs_sobel_V = absolute_sobel_thresh(V, 'x', thresh=(20,150))
-    H_list.append(('Sobel H', abs_sobel_H))
-    S_list.append(('Sobel S', abs_sobel_S))
-    V_list.append(('Sobel V', abs_sobel_V))
+    #H_list.append(('Sobel H', abs_sobel_H))
+    #S_list.append(('Sobel S', abs_sobel_S))
+    #V_list.append(('Sobel V', abs_sobel_V))
 
-    mag_threshold_H = magnitude_thresh(H, thresh=(20, 150))
-    mag_threshold_S = magnitude_thresh(S, thresh=(20, 150))
+    #mag_threshold_H = magnitude_thresh(H, thresh=(20, 150))
+    #mag_threshold_S = magnitude_thresh(S, thresh=(20, 150))
     mag_threshold_V = magnitude_thresh(V, thresh=(20, 150))
-    H_list.append(('Magnitude H', mag_threshold_H))
-    S_list.append(('Magnitude S', mag_threshold_S))
+    #H_list.append(('Magnitude H', mag_threshold_H))
+    #S_list.append(('Magnitude S', mag_threshold_S))
     V_list.append(('Magnitude V', mag_threshold_V))
 
-    dir_threshold_H = direction_thresh(H, sobel_kernel=15, thresh=(0.7, 1.2))
-    dir_threshold_S = direction_thresh(S, sobel_kernel=15, thresh=(0.7, 1.2))
+    #dir_threshold_H = direction_thresh(H, sobel_kernel=15, thresh=(0.7, 1.2))
+    #dir_threshold_S = direction_thresh(S, sobel_kernel=15, thresh=(0.7, 1.2))
     dir_threshold_V = direction_thresh(V, sobel_kernel=15, thresh=(0.7, 1.2))
-    H_list.append(('Direction H', dir_threshold_H))
-    S_list.append(('Direction S', dir_threshold_S))
-    V_list.append(('Direction V', dir_threshold_V))
+    #H_list.append(('Direction H', dir_threshold_H))
+    #S_list.append(('Direction S', dir_threshold_S))
+    #V_list.append(('Direction V', dir_threshold_V))
 
 
     combined_V = np.zeros_like(dir_threshold_V)
     combined_V[ (abs_sobel_V == 1) | ((mag_threshold_V == 1) & (dir_threshold_V == 1))] = 1
-    combined_H = np.zeros_like(dir_threshold_H)
-    combined_H[ (abs_sobel_H == 1) | ((mag_threshold_H == 1) & (dir_threshold_H == 1))] = 1
-    combined_S = np.zeros_like(dir_threshold_S)
-    combined_S[ (abs_sobel_S == 1) | ((mag_threshold_S == 1) & (dir_threshold_S == 1))] = 1
-    H_list.append(('Combined H', combined_H))
-    S_list.append(('Combined S', combined_S))
-    V_list.append(('Combined V', combined_V))
-    thresholded_img.append(H_list)
-    thresholded_img.append(S_list)
-    thresholded_img.append(V_list)
+    #combined_H = np.zeros_like(dir_threshold_H)
+    #combined_H[ (abs_sobel_H == 1) | ((mag_threshold_H == 1) & (dir_threshold_H == 1))] = 1
+    #combined_S = np.zeros_like(dir_threshold_S)
+    #combined_S[ (abs_sobel_S == 1) | ((mag_threshold_S == 1) & (dir_threshold_S == 1))] = 1
+    #H_list.append(('Combined H', combined_H))
+    #S_list.append(('Combined S', combined_S))
+    #V_list.append(('Combined V', combined_V))
+    #thresholded_img.append(H_list)
+    #thresholded_img.append(S_list)
+    #thresholded_img.append(V_list)
 
-    display_result(non_thresholeded, thresholded_img)
+    #display_result(non_thresholeded, thresholded_img)
     return combined_V
 
 
@@ -316,10 +316,10 @@ def process_image(img, mtx, dist):
     combined_R = process_brg(img,mtx, dist)
     combined_S = process_hsv(img,mtx, dist)
     combined_V = process_hsv(img,mtx, dist)
-    stacked_g_R_S = np.dstack((combined_g, combined_R, combined_S))
-    stacked_R_S_V = np.dstack((combined_R, combined_S, combined_V))
-    stacked_g_S_V = np.dstack((combined_g, combined_S, combined_V))
-    stacked_g_V_R = np.dstack((combined_g, combined_V, combined_R))
+    #stacked_g_R_S = np.dstack((combined_g, combined_R, combined_S))
+    #stacked_R_S_V = np.dstack((combined_R, combined_S, combined_V))
+    #stacked_g_S_V = np.dstack((combined_g, combined_S, combined_V))
+    #stacked_g_V_R = np.dstack((combined_g, combined_V, combined_R))
     # f, axes = plt.subplots(2, 2)
     # f.tight_layout()
     # axes[0, 0].imshow(stacked_g_R_S)
