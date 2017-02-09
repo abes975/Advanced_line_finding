@@ -4,6 +4,7 @@ import cv2
 import glob
 import os
 import pickle
+import math
 
 '''
     Will calibrate the camera using the image passed as input
@@ -134,9 +135,9 @@ def process_gray(img, mtx, dist):
     #gray_images = []
     #thresholded_img = []
     #non_thresholeded = [ ('Original', img), ('Gray',gray)]
-    abs_sobel = absolute_sobel_thresh(undistorted, 'x', thresh=(30,120))
+    abs_sobel = absolute_sobel_thresh(undistorted, 'x', thresh=(30,150))
     #gray_images.append(('Sobel X', abs_sobel))
-    mag_threshold = magnitude_thresh(undistorted, thresh=(30, 120))
+    mag_threshold = magnitude_thresh(undistorted, thresh=(30, 150))
     #gray_images.append(('Magnitude ', mag_threshold))
     dir_threshold = direction_thresh(undistorted, sobel_kernel=15, thresh=(0.7, 1.3))
     #gray_images.append(('Direction', dir_threshold))
@@ -163,14 +164,14 @@ def process_brg(img, mtx, dist):
 
     #abs_sobel_B = absolute_sobel_thresh(B, 'x', thresh=(20,150))
     #abs_sobel_G = absolute_sobel_thresh(G, 'x', thresh=(20,150))
-    abs_sobel_R = absolute_sobel_thresh(R, 'x', thresh=(20,150))
+    abs_sobel_R = absolute_sobel_thresh(R, 'x', thresh=(30,150))
     #B_list.append(('Sobel B', abs_sobel_B))
     #G_list.append(('Sobel G', abs_sobel_G))
     #R_list.append(('Sobel R', abs_sobel_R))
 
     #mag_threshold_B = magnitude_thresh(B, thresh=(20, 150))
     #mag_threshold_G = magnitude_thresh(G, thresh=(20, 150))
-    mag_threshold_R = magnitude_thresh(R, thresh=(20, 150))
+    mag_threshold_R = magnitude_thresh(R, thresh=(30, 150))
     #B_list.append(('Magnitude B', mag_threshold_B))
     #G_list.append(('Magnitude G', mag_threshold_G))
     #R_list.append(('Magnitude R', mag_threshold_R))
@@ -214,14 +215,14 @@ def process_hls(img, mtx, dist):
 
     #abs_sobel_H = absolute_sobel_thresh(H, 'x', thresh=(20,150))
     #abs_sobel_L = absolute_sobel_thresh(L, 'x', thresh=(20,150))
-    abs_sobel_S = absolute_sobel_thresh(S, 'x', thresh=(20,150))
+    abs_sobel_S = absolute_sobel_thresh(S, 'x', thresh=(175,250))
     #H_list.append(('Sobel H', abs_sobel_H))
     #L_list.append(('Sobel L', abs_sobel_L))
     #S_list.append(('Sobel S', abs_sobel_S))
 
     #mag_threshold_H = magnitude_thresh(H, thresh=(20, 150))
     #mag_threshold_L = magnitude_thresh(L, thresh=(20, 150))
-    mag_threshold_S = magnitude_thresh(S, thresh=(20, 150))
+    mag_threshold_S = magnitude_thresh(S, thresh=(175, 250))
     #H_list.append(('Magnitude H', mag_threshold_H))
     #L_list.append(('Magnitude L', mag_threshold_H))
     #S_list.append(('Magnitude S', mag_threshold_S))
@@ -265,14 +266,14 @@ def process_hsv(img, mtx, dist):
 
     #abs_sobel_H = absolute_sobel_thresh(H, 'x', thresh=(20,150))
     #abs_sobel_S = absolute_sobel_thresh(S, 'x', thresh=(20,150))
-    abs_sobel_V = absolute_sobel_thresh(V, 'x', thresh=(20,150))
+    abs_sobel_V = absolute_sobel_thresh(V, 'x', thresh=(175,250))
     #H_list.append(('Sobel H', abs_sobel_H))
     #S_list.append(('Sobel S', abs_sobel_S))
     #V_list.append(('Sobel V', abs_sobel_V))
 
     #mag_threshold_H = magnitude_thresh(H, thresh=(20, 150))
     #mag_threshold_S = magnitude_thresh(S, thresh=(20, 150))
-    mag_threshold_V = magnitude_thresh(V, thresh=(20, 150))
+    mag_threshold_V = magnitude_thresh(V, thresh=(175, 250))
     #H_list.append(('Magnitude H', mag_threshold_H))
     #S_list.append(('Magnitude S', mag_threshold_S))
     V_list.append(('Magnitude V', mag_threshold_V))
@@ -290,19 +291,192 @@ def process_hsv(img, mtx, dist):
     #combined_H = np.zeros_like(dir_threshold_H)
     #combined_H[ (abs_sobel_H == 1) | ((mag_threshold_H == 1) & (dir_threshold_H == 1))] = 1
     #combined_S = np.zeros_like(dir_threshold_S)
-    #combined_S[ (abs_sobel_S == 1) | ((mag_threshold_S == 1) & (dir_threshold_S == 1))] = 1
-    #H_list.append(('Combined H', combined_H))
-    #S_list.append(('Combined S', combined_S))
-    #V_list.append(('Combined V', combined_V))
-    #thresholded_img.append(H_list)
-    #thresholded_img.append(S_list)
-    #thresholded_img.append(V_list)
-
+    #combined_S[ (abs_sobetop
     #display_result(non_thresholeded, thresholded_img)
     return combined_V
 
 
+'''
+    Define a region of interest inside the image
+    We will use the point of the region as the starting point for the
+    perspective transform
+'''
+def extract_region_of_interest(img):
+    height = img.shape[0]
+    width = img.shape[1]
+    # y_top = math.ceil(height/10 * 6.2)
+    # y_bot = math.ceil(height/10 * 9)
+    # x_left_bot = math.ceil(width/6 * 1)
+    # x_right_bot = math.ceil(width/6 * 5)
+    # x_left_top = math.ceil(width/10 * 4.6)
+    # x_right_top = math.ceil(width/10 * 5)
+    #print("X_l_t =", x_left_top, "X_l_b = ", x_left_bot, "X_r_t = ", x_right_top,
+    #    "X_r_b = ", x_right_bot, "y_top = ", y_top, " y_bot = ", y_bot)
+    # The order is important as we will use thos points to calculate destination
+    # points...
+    y_top = 460
+    y_bot = 720
+    x_left_bot = 203
+    x_right_bot = 1180
+    x_left_top = 585
+    x_right_top = 715
+    points = np.int32([[x_left_top, y_top], [x_right_top, y_top], [x_right_bot, y_bot], [x_left_bot, y_bot]])
 
+    #defining a blank mask to start with
+    mask = np.zeros_like(img)
+    ignore_mask_color = 1
+    cv2.fillPoly(mask, [points], ignore_mask_color)
+    # plt.imshow(mask, cmap='gray')
+    # plt.show()
+    #returning the image only where mask pixels are nonzero
+    masked_image = cv2.bitwise_and(img, mask)
+    # plt.imshow(masked_image, cmap='gray')
+    # plt.show()
+    return np.float32(points), masked_image
+
+
+def find_destination_points(src_points):
+    x_left_bot = 400
+    x_left_top = 400
+    x_right_bot = 980
+    x_right_top = 980
+    y_top = 0
+    y_bot = 720
+    return np.float32([[x_left_top, y_top],[x_right_top, y_top],[x_right_bot, y_bot],[x_left_bot, y_bot]])
+
+
+def find_lines(binary_warped, win):
+    # Assuming you have created a warped binary image called "binary_warped"
+    # Take a histogram of the bottom half of the image
+    histogram = np.sum(binary_warped[math.ceil(binary_warped.shape[0]/2):,:], axis=0)
+    # Create an output image to draw on and  visualize the result
+    out_img = np.dstack((binary_warped, binary_warped, binary_warped)) * 255
+    # Find the peak of the left and right halves of the histogram
+    # These will be the starting point for the left and right lines
+    midpoint = np.int(histogram.shape[0]/2)
+    leftx_base = np.argmax(histogram[:midpoint])
+    rightx_base = np.argmax(histogram[midpoint:]) + midpoint
+
+    # Choose the number of sliding windows
+    nwindows = 9
+    # Set height of windows
+    window_height = np.int(binary_warped.shape[0]/nwindows)
+    # Identify the x and y positions of all nonzero pixels in the image
+    nonzero = binary_warped.nonzero()
+    nonzeroy = np.array(nonzero[0])
+    nonzerox = np.array(nonzero[1])
+    # Current positions to be updated for each window
+    leftx_current = leftx_base
+    rightx_current = rightx_base
+    # Set the width of the windows +/- margin
+    margin = 100
+    # Set minimum number of pixels found to recenter window
+    minpix = 50
+    # Create empty lists to receive left and right lane pixel indices
+    left_lane_inds = []
+    right_lane_inds = []
+
+    # Step through the windows one by one
+    for window in range(nwindows):
+        # Identify window boundaries in x and y (and right and left)
+        win_y_low = binary_warped.shape[0] - (window+1)*window_height
+        win_y_high = binary_warped.shape[0] - window*window_height
+        win_xleft_low = leftx_current - margin
+        win_xleft_high = leftx_current + margin
+        win_xright_low = rightx_current - margin
+        win_xright_high = rightx_current + margin
+        # Draw the windows on the visualization image
+        cv2.rectangle(out_img,(win_xleft_low,win_y_low),(win_xleft_high,win_y_high),(0,255,0), 2)
+        cv2.rectangle(out_img,(win_xright_low,win_y_low),(win_xright_high,win_y_high),(0,255,0), 2)
+        # Identify the nonzero pixels in x and y within the window
+        good_left_inds = ((nonzeroy >= win_y_low) & (nonzeroy < win_y_high) & (nonzerox >= win_xleft_low) & (nonzerox < win_xleft_high)).nonzero()[0]
+        good_right_inds = ((nonzeroy >= win_y_low) & (nonzeroy < win_y_high) & (nonzerox >= win_xright_low) & (nonzerox < win_xright_high)).nonzero()[0]
+        # Append these indices to the lists
+        left_lane_inds.append(good_left_inds)
+        right_lane_inds.append(good_right_inds)
+        # If you found > minpix pixels, recenter next window on their mean position
+        if len(good_left_inds) > minpix:
+            leftx_current = np.int(np.mean(nonzerox[good_left_inds]))
+        if len(good_right_inds) > minpix:
+            rightx_current = np.int(np.mean(nonzerox[good_right_inds]))
+
+    # Concatenate the arrays of indices
+    left_lane_inds = np.concatenate(left_lane_inds)
+    right_lane_inds = np.concatenate(right_lane_inds)
+
+    # Extract left and right line pixel positions
+    leftx = nonzerox[left_lane_inds]
+    lefty = nonzeroy[left_lane_inds]
+    rightx = nonzerox[right_lane_inds]
+    righty = nonzeroy[right_lane_inds]
+
+    # Fit a second order polynomial to each
+    left_fit = np.polyfit(lefty, leftx, 2)
+    right_fit = np.polyfit(righty, rightx, 2)
+
+    # Generate x and y values for plotting
+    ploty = np.linspace(0, binary_warped.shape[0]-1, binary_warped.shape[0] )
+    left_fitx = left_fit[0]*ploty**2 + left_fit[1]*ploty + left_fit[2]
+    right_fitx = right_fit[0]*ploty**2 + right_fit[1]*ploty + right_fit[2]
+
+    out_img[nonzeroy[left_lane_inds], nonzerox[left_lane_inds]] = [255, 0, 0]
+    out_img[nonzeroy[right_lane_inds], nonzerox[right_lane_inds]] = [0, 0, 255]
+    plt.plot(left_fitx, ploty, color='yellow')
+    plt.plot(right_fitx, ploty, color='yellow')
+    plt.xlim(0, 1280)
+    plt.ylim(720, 0)
+    plt.imshow(out_img)
+    plt.show()
+
+
+# # Assume you now have a new warped binary image
+# # from the next frame of video (also called "img")
+# # It's now much easier to find line pixels!
+# nonzero = img.nonzero()
+# nonzeroy = np.array(nonzero[0])
+# nonzerox = np.array(nonzero[1])
+# margin = 100
+# left_lane_inds = ((nonzerox > (left_fit[0]*(nonzeroy**2) + left_fit[1]*nonzeroy + left_fit[2] - margin)) & (nonzerox < (left_fit[0]*(nonzeroy**2) + left_fit[1]*nonzeroy + left_fit[2] + margin)))
+# right_lane_inds = ((nonzerox > (right_fit[0]*(nonzeroy**2) + right_fit[1]*nonzeroy + right_fit[2] - margin)) & (nonzerox < (right_fit[0]*(nonzeroy**2) + right_fit[1]*nonzeroy + right_fit[2] + margin)))
+#
+# # Again, extract left and right line pixel positions
+# leftx = nonzerox[left_lane_inds]
+# lefty = nonzeroy[left_lane_inds]
+# rightx = nonzerox[right_lane_inds]
+# righty = nonzeroy[right_lane_inds]
+# # Fit a second order polynomial to each
+# left_fit = np.polyfit(lefty, leftx, 2)
+# right_fit = np.polyfit(righty, rightx, 2)
+# # Generate x and y values for plotting
+# ploty = np.linspace(0, img.shape[0]-1, img.shape[0] )
+# left_fitx = left_fit[0]*ploty**2 + left_fit[1]*ploty + left_fit[2]
+# right_fitx = right_fit[0]*ploty**2 + right_fit[1]*ploty + right_fit[2]
+# And you're done! But let's visualize the result here as well
+# # Create an image to draw on and an image to show the selection window
+# out_img = np.dstack((img, img, img))*255
+# window_img = np.zeros_like(out_img)
+# # Color in left and right line pixels
+# out_img[nonzeroy[left_lane_inds], nonzerox[left_lane_inds]] = [255, 0, 0]
+# out_img[nonzeroy[right_lane_inds], nonzerox[right_lane_inds]] = [0, 0, 255]
+#
+# # Generate a polygon to illustrate the search window area
+# # And recast the x and y points into usable format for cv2.fillPoly()
+# left_line_window1 = np.array([np.transpose(np.vstack([left_fitx-margin, ploty]))])
+# left_line_window2 = np.array([np.flipud(np.transpose(np.vstack([left_fitx+margin, ploty])))])
+# left_line_pts = np.hstack((left_line_window1, left_line_window2))
+# right_line_window1 = np.array([np.transpose(np.vstack([right_fitx-margin, ploty]))])
+# right_line_window2 = np.array([np.flipud(np.transpose(np.vstack([right_fitx+margin, ploty])))])
+# right_line_pts = np.hstack((right_line_window1, right_line_window2))
+#
+# # Draw the lane onto the warped blank image
+# cv2.fillPoly(window_img, np.int_([left_line_pts]), (0,255, 0))
+# cv2.fillPoly(window_img, np.int_([right_line_pts]), (0,255, 0))
+# result = cv2.addWeighted(out_img, 1, window_img, 0.3, 0)
+# plt.imshow(result)
+# plt.plot(left_fitx, ploty, color='yellow')
+# plt.plot(right_fitx, ploty, color='yellow')
+# plt.xlim(0, 1280)
+# plt.ylim(720, 0)
 
 '''
     This is the main routine.
@@ -324,17 +498,31 @@ def process_image(img, mtx, dist):
     # f.tight_layout()
     # axes[0, 0].imshow(stacked_g_R_S)
     # axes[0, 0].set_title("Gray, Red, Saturation")
-    # axes[0, 1].imshow(stacked_R_S_V)
-    # axes[0, 1].set_title("Red, Saturation, Value")
-    # axes[1, 0].imshow(stacked_g_S_V)
-    # axes[1, 0].set_title("Gray, Saturation, Value")
-    # axes[1, 1].imshow(stacked_g_V_R)
-    # axes[1, 1].set_title("Gray, Value, Red")
+    # axes[0, 1].imshow(stacked_R_give in to meValue, Red")
     # plt.show()
     combined = np.zeros_like(combined_g)
     combined[(combined_g == 1) | (combined_R == 1) & ((combined_S == 1) | (combined_V == 1))] = 1
-    plt.imshow(combined, cmap='gray')
-    plt.show()
+    src_points, masked_image = extract_region_of_interest(combined)
+    dst_points = find_destination_points(src_points)
+    # plt.imshow(combined, cmap='gray')
+    # plt.show()
+
+    # now do a prospective transform
+    # we have to define destination points...y is aligned and I does not change for me
+    # I just translate to the origin nothing more :)
+
+    M = cv2.getPerspectiveTransform(src_points, dst_points)
+    Minv = cv2.getPerspectiveTransform(dst_points, src_points)
+    #print("Src points = ", src_points, " dst points ", dst_points, "M" , M)
+    warped = cv2.warpPerspective(np.float64(masked_image), M, (combined.shape[1], combined.shape[0]))
+    #plt.imshow(warped, cmap='gray')
+    #plt.show()
+    inv_warp = cv2.warpPerspective(np.float64(warped), Minv, (combined.shape[1], combined.shape[0]))
+    # plt.imshow(inv_warp, cmap='gray')
+    # plt.show()
+    find_lines(warped, 10)
+
+
 
 if __name__ == "__main__":
     matrices_file = "./camera_calibration_matrices.p"
@@ -372,7 +560,7 @@ if __name__ == "__main__":
     #cv2.imwrite(dest_file, undistorted)
     #cv2.imshow(distorted, undistorted)
     #cv2.waitKey(0)
-    test_images_path = "./test_images/*"
+    test_images_path = "./test_images/straight_lines2.jpg"
     test_images_files = glob.glob(test_images_path)
     for image_file in test_images_files:
         image = cv2.imread(image_file)
