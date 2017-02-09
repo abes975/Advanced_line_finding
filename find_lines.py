@@ -345,12 +345,12 @@ def find_destination_points(src_points):
     return np.float32([[x_left_top, y_top],[x_right_top, y_top],[x_right_bot, y_bot],[x_left_bot, y_bot]])
 
 
-def find_lines(binary_warped, win):
+def find_lines(warped_img, win):
     # Assuming you have created a warped binary image called "binary_warped"
     # Take a histogram of the bottom half of the image
-    histogram = np.sum(binary_warped[math.ceil(binary_warped.shape[0]/2):,:], axis=0)
+    histogram = np.sum(warped_img[warped_img.shape[0]//2:,:], axis=0)
     # Create an output image to draw on and  visualize the result
-    out_img = np.dstack((binary_warped, binary_warped, binary_warped)) * 255
+    out_img = np.dstack((warped_img, warped_img, warped_img)) * 255
     # Find the peak of the left and right halves of the histogram
     # These will be the starting point for the left and right lines
     midpoint = np.int(histogram.shape[0]/2)
@@ -360,9 +360,9 @@ def find_lines(binary_warped, win):
     # Choose the number of sliding windows
     nwindows = 9
     # Set height of windows
-    window_height = np.int(binary_warped.shape[0]/nwindows)
+    window_height = np.int(warped_img.shape[0]/nwindows)
     # Identify the x and y positions of all nonzero pixels in the image
-    nonzero = binary_warped.nonzero()
+    nonzero = warped_img.nonzero()
     nonzeroy = np.array(nonzero[0])
     nonzerox = np.array(nonzero[1])
     # Current positions to be updated for each window
@@ -379,18 +379,26 @@ def find_lines(binary_warped, win):
     # Step through the windows one by one
     for window in range(nwindows):
         # Identify window boundaries in x and y (and right and left)
-        win_y_low = binary_warped.shape[0] - (window+1)*window_height
-        win_y_high = binary_warped.shape[0] - window*window_height
-        win_xleft_low = leftx_current - margin
-        win_xleft_high = leftx_current + margin
-        win_xright_low = rightx_current - margin
-        win_xright_high = rightx_current + margin
+        # Y low is the low (as number) end of the windows..from img[height] to 0
+        win_y_low = warped_img.shape[0] - (window + 1) * window_height
+        win_y_high = warped_img.shape[0] - window * window_height
+        # these are the left and the right vertex of the rectanle over x axe
+        # For the window centerd at leftx_current
+        win_xleft_left = leftx_current - margin
+        win_xleft_right = leftx_current + margin
+        print("Windows left has vertex (", win_xleft_left, ", ", win_y_high, ") and (", win_xleft_right, ", ", win_y_low, ")")
+        # these are the left and the right vertex of the rectanle over x axe
+        # For the window centerd at rightx_current
+        win_xright_left = rightx_current - margin
+        win_xright_right = rightx_current + margin
+        print("Windows right has vertex (", win_xright_left, ", ", win_y_high, ") and (", win_xright_right, ", ", win_y_low, ")")
         # Draw the windows on the visualization image
-        cv2.rectangle(out_img,(win_xleft_low,win_y_low),(win_xleft_high,win_y_high),(0,255,0), 2)
-        cv2.rectangle(out_img,(win_xright_low,win_y_low),(win_xright_high,win_y_high),(0,255,0), 2)
+        cv2.rectangle(out_img, (win_xleft_left, win_y_high),(win_xleft_right, win_y_low), (0,255,0), 2)
+        cv2.rectangle(out_img, (win_xright_left, win_y_high),(win_xright_right,win_y_low), (0,255,0), 2)
+        #plt.imsave("out_img_right_" + str(window) + ".jpg", out_img)
         # Identify the nonzero pixels in x and y within the window
-        good_left_inds = ((nonzeroy >= win_y_low) & (nonzeroy < win_y_high) & (nonzerox >= win_xleft_low) & (nonzerox < win_xleft_high)).nonzero()[0]
-        good_right_inds = ((nonzeroy >= win_y_low) & (nonzeroy < win_y_high) & (nonzerox >= win_xright_low) & (nonzerox < win_xright_high)).nonzero()[0]
+        good_left_inds = ((nonzeroy >= win_y_low) & (nonzeroy < win_y_high) & (nonzerox >= win_xleft_left) & (nonzerox < win_xleft_right)).nonzero()[0]
+        good_right_inds = ((nonzeroy >= win_y_low) & (nonzeroy < win_y_high) & (nonzerox >= win_xright_left) & (nonzerox < win_xright_right)).nonzero()[0]
         # Append these indices to the lists
         left_lane_inds.append(good_left_inds)
         right_lane_inds.append(good_right_inds)
@@ -415,7 +423,7 @@ def find_lines(binary_warped, win):
     right_fit = np.polyfit(righty, rightx, 2)
 
     # Generate x and y values for plotting
-    ploty = np.linspace(0, binary_warped.shape[0]-1, binary_warped.shape[0] )
+    ploty = np.linspace(0, warped_img.shape[0]-1,  warped_img.shape[0])
     left_fitx = left_fit[0]*ploty**2 + left_fit[1]*ploty + left_fit[2]
     right_fitx = right_fit[0]*ploty**2 + right_fit[1]*ploty + right_fit[2]
 
@@ -425,9 +433,10 @@ def find_lines(binary_warped, win):
     plt.plot(right_fitx, ploty, color='yellow')
     plt.xlim(0, 1280)
     plt.ylim(720, 0)
-    plt.imshow(out_img)
-    plt.show()
-
+    cv2.imshow("output_image", out_img)
+    cv2.waitKey(0)
+    #plt.imshow(out_img)
+    #plt.show()
 
 # # Assume you now have a new warped binary image
 # # from the next frame of video (also called "img")
@@ -560,7 +569,7 @@ if __name__ == "__main__":
     #cv2.imwrite(dest_file, undistorted)
     #cv2.imshow(distorted, undistorted)
     #cv2.waitKey(0)
-    test_images_path = "./test_images/straight_lines2.jpg"
+    test_images_path = "./test_images/traight_lines2.jpg"
     test_images_files = glob.glob(test_images_path)
     for image_file in test_images_files:
         image = cv2.imread(image_file)
