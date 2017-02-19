@@ -48,37 +48,38 @@ if __name__ == "__main__":
 
     src_points = utils.define_source_points()
     dst_points = utils.define_dst_points()
-    warper = warper.Warper(mtx, dist, src_points, dst_points, 10)
+    warper = warper.Warper(mtx, dist, src_points, dst_points, 15)
 
-    # test_images_path = "./test_images/*.jpg"
+    # test_images_path = "./test_images/straight_lines2.jpg"
     # test_images_files = glob.glob(test_images_path)
     # for image_file in test_images_files:
     #     image = cv2.imread(image_file)
     #     out = warper.process_image(image)
-    #     plt.imshow(out)
+    #     plt.imshow(cv2.cvtColor(out, cv2.COLOR_BGR2RGB))
     #     plt.show()
-    #
-    # Test videos
+
+    # # Test videos
+    # video_output = 'project_video_out.mp4'
+    # # print('Starting video 1')
+    # # clip1 = VideoFileClip("project_video.mp4")
+    # # video_clip = clip1.fl_image(warper.process_image)
+    # # video_clip.write_videofile(video_output, audio=False)
     video_output = 'project_video_out.mp4'
-    # print('Starting video 1')
-    # clip1 = VideoFileClip("project_video.mp4")
-    # video_clip = clip1.fl_image(warper.process_image)
-    # video_clip.write_videofile(video_output, audio=False)
     if not os.path.exists(video_output):
         print('Starting video 1')
         clip1 = VideoFileClip("project_video.mp4")
         video_clip = clip1.fl_image(warper.process_image)
         video_clip.write_videofile(video_output, audio=False)
-    video_output = 'challenge_video_out.mp4'
-    if not os.path.exists(video_output):
-        print('Starting video 2')
-        clip1 = VideoFileClip("challenge_video.mp4")
-        video_clip = clip1.fl_image(warper.process_image)
-        video_clip.write_videofile(video_output, audio=False)
-    video_output = 'harder_challenge_video_out.mp4'
-    if not os.path.exists(video_output):
-        print('Starting video 3')
-        video_output = 'harder_challenge_video_out.mp4'
-        clip1 = VideoFileClip("harder_challenge_video.mp4")
-        video_clip = clip1.fl_image(warper.process_image)
-        video_clip.write_videofile(video_output, audio=False)
+    # video_output = 'challenge_video_out.mp4'
+    # if not os.path.exists(video_output):
+    #     print('Starting video 2')
+    #     clip1 = VideoFileClip("challenge_video.mp4")
+    #     video_clip = clip1.fl_image(warper.process_image)
+    #     video_clip.write_videofile(video_output, audio=False)
+    # video_output = 'harder_challenge_video_out.mp4'
+    # if not os.path.exists(video_output):
+    #     print('Starting video 3')
+    #     video_output = 'harder_challenge_video_out.mp4'
+    #     clip1 = VideoFileClip("harder_challenge_video.mp4")
+    #     video_clip = clip1.fl_image(warper.process_image)
+    #     video_clip.write_videofile(video_output, audio=False)

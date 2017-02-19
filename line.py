@@ -47,38 +47,38 @@ class Line:
         fit_x = coeff[0] * y ** 2 + coeff[1] * y + coeff[2]
         return fit_x
 
-    '''
-        Need to add some validation for found coefficients
-    '''
-    def _validate(self):
-        # Ie lines are almos parallel...
-        # distance between lines is almost the right one..and so on...
-        # Get slope for left and right and check if they are similar (means
-        # that the line are parallels)
-        # slope_left = (50 - 0) / (self.last_left_x[50] - self.last_left_x[0])
-        # slope_right = (50 - 0) / (self.last_right_x[50] - self.last_right_x[0])
-        # diff_slopes = abs(slope_left - slope_right)
-        # print("Difference between slopes: ", diff_slopes, "slope_left ", slope_left, " slope_right ", slope_right)
-        # if diff_slopes > 0.1:
-        #     print("Diff solpes is too high ", diff_slopes)
-        #     return False
-        # Check distance in meter...we have 3.7 for USA between left and right lane
-        xm_per_pix = 3.7/700
-        diff1 = self.last_right_x[0] - self.last_left_x[0]
-        diff2 = self.last_right_x[len(self.last_right_x)//2] - self.last_left_x[len(self.last_right_x)//2]
-        diff3 = self.last_right_x[-1] - self.last_left_x[-1]
-        #print("Diff1 ", diff1 * xm_per_pix, "diff2 = ", diff2 * xm_per_pix, " diff3 = ", diff3 * xm_per_pix)
-        thresh = 700 * 1.05
-        if diff1 > thresh:
-            print("Diff1 is not ok")
-            return False
-            print("Diff2 is not ok")
-        if diff2 > thresh:
-            return False
-        if diff3 > thresh:
-            print("Diff3 is not ok")
-            return False
-        return True
+    # '''
+    #     Need to add some validation for found coefficients
+    # '''
+    # def _validate(self):
+    #     # Ie lines are almos parallel...
+    #     # distance between lines is almost the right one..and so on...
+    #     # Get slope for left and right and check if they are similar (means
+    #     # that the line are parallels)
+    #     # slope_left = (50 - 0) / (self.last_left_x[50] - self.last_left_x[0])
+    #     # slope_right = (50 - 0) / (self.last_right_x[50] - self.last_right_x[0])
+    #     # diff_slopes = abs(slope_left - slope_right)
+    #     # print("Difference between slopes: ", diff_slopes, "slope_left ", slope_left, " slope_right ", slope_right)
+    #     # if diff_slopes > 0.1:
+    #     #     print("Diff solpes is too high ", diff_slopes)
+    #     #     return False
+    #     # Check distance in meter...we have 3.7 for USA between left and right lane
+    #     xm_per_pix = 3.7/700
+    #     diff1 = self.last_right_x[0] - self.last_left_x[0]
+    #     diff2 = self.last_right_x[len(self.last_right_x)//2] - self.last_left_x[len(self.last_right_x)//2]
+    #     diff3 = self.last_right_x[-1] - self.last_left_x[-1]
+    #     #print("Diff1 ", diff1 * xm_per_pix, "diff2 = ", diff2 * xm_per_pix, " diff3 = ", diff3 * xm_per_pix)
+    #     thresh = 700 * 1.05
+    #     if diff1 > thresh:
+    #         print("Diff1 is not ok")
+    #         return False
+    #         print("Diff2 is not ok")
+    #     if diff2 > thresh:
+    #         return False
+    #     if diff3 > thresh:
+    #         print("Diff3 is not ok")
+    #         return False
+    #     return True
 
     '''
         The following code is taken directly from the udacity lesson
@@ -88,6 +88,7 @@ class Line:
         # Assuming you have created a warped binary image called "binary_warped"
         # Take a histogram of the bottom third of the image
         histogram = np.sum(warped_img[warped_img.shape[0]//2:,:], axis=0)
+        #plt.plot(histogram)
         # Create an output image to draw on and visualize the result
         out_img = np.dstack((warped_img, warped_img, warped_img)) * 255
         # Find the peak of the left and right halves of the histogram
@@ -137,8 +138,8 @@ class Line:
             #print("Windows right has vertex (", win_xright_left, ", ", win_y_high,
             #   ") and (", win_xright_right, ", ", win_y_low, ")")
             # Draw the windows on the visualization image
-            #cv2.rectangle(out_img, (win_xleft_left, win_y_high),(win_xleft_right, win_y_low), (0,255,0), 2)
-            #cv2.rectangle(out_img, (win_xright_left, win_y_high),(win_xright_right,win_y_low), (0,255,0), 2)
+            cv2.rectangle(out_img, (win_xleft_left, win_y_high),(win_xleft_right, win_y_low), (0,255,0), 2)
+            cv2.rectangle(out_img, (win_xright_left, win_y_high),(win_xright_right,win_y_low), (0,255,0), 2)
             # Identify the nonzero pixels in x and y within the window
             good_left_inds = ((nonzeroy >= win_y_low) & (nonzeroy < win_y_high)
                 & (nonzerox >= win_xleft_left)
@@ -168,7 +169,9 @@ class Line:
         # Fit a second order polynomial to each
         self.left_fit = np.polyfit(lefty, leftx, 2)
         self.right_fit  = np.polyfit(righty, rightx, 2)
-
+        #
+        # cv2.imshow("finding lines", out_img)
+        # cv2.waitKey(0)
         ploty = np.linspace(0, warped_img.shape[0]-1, warped_img.shape[0])
         last_left_x = self._poly_fitx(ploty, self.left_fit)
         last_right_x = self._poly_fitx(ploty, self.right_fit)
@@ -214,34 +217,6 @@ class Line:
         last_left_x = self._poly_fitx(ploty, self.left_fit)
         last_right_x = self._poly_fitx(ploty, self.right_fit)
 
-
-        #And you're done! But let's visualize the result here as well
-
-        # # Create an image to draw on and an image to show the selection window
-        # out_img = np.dstack((warped_img, warped_img, warped_img))*255
-        # window_img = np.zeros_like(out_img)
-        # # Color in left and right line pixels
-        # out_img[nonzeroy[left_lane_inds], nonzerox[left_lane_inds]] = [255, 0, 0]
-        # out_img[nonzeroy[right_lane_inds], nonzerox[right_lane_inds]] = [0, 0, 255]
-        #
-        # # Generate a polygon to illustrate the search window area
-        # # And recast the x and y points into usable format for cv2.fillPoly()
-        # left_line_window1 = np.array([np.transpose(np.vstack([left_fitx-margin, ploty]))])
-        # left_line_window2 = np.array([np.flipud(np.transpose(np.vstack([left_fitx+margin, ploty])))])
-        # left_line_pts = np.hstack((left_line_window1, left_line_window2))
-        # right_line_window1 = np.array([np.transpose(np.vstack([right_fitx-margin, ploty]))])
-        # right_line_window2 = np.array([np.flipud(np.transpose(np.vstack([right_fitx+margin, ploty])))])
-        # right_line_pts = np.hstack((right_line_window1, right_line_window2))
-        #
-        # # Draw the lane onto the warped blank image
-        # cv2.fillPoly(window_img, np.int_([left_line_pts]), (0,255, 0))
-        # cv2.fillPoly(window_img, np.int_([right_line_pts]), (0,255, 0))
-        # result = cv2.addWeighted(out_img, 1, window_img, 0.3, 0)
-        # plt.imshow(result)
-        # plt.plot(left_fitx, ploty, color='yellow')
-        # plt.plot(right_fitx, ploty, color='yellow')
-        # plt.xlim(0, 1280)
-        # plt.ylim(720, 0)
         return last_left_x, last_right_x
 
     '''
@@ -281,9 +256,6 @@ class Line:
     def _calculate_radius(self, point):
         # Define y-value where we want radius of curvature
         y_eval = point
-        # first we calculate the intercept points at the bottom of our image
-        #left_intercept = self.left_fit[0] * y_eval ** 2 + self.left_fit[1] * y_eval + self.left_fit[2]
-        #right_intercept = self.right_fit[0] * y_eval ** 2 + self.right_fit[1] * y_eval + self.right_fit[2]
         # Define conversions in x and y from pixels space to meters
         ym_per_pix = 30/720 # meters per pixel in y dimension
         xm_per_pix = 3.7/700 # meters per pixel in x dimension

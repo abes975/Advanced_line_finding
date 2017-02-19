@@ -102,10 +102,6 @@ def define_source_points():
     x_right_bot = 1127
     x_left_top = 585
     x_right_top = 695
-# leftupperpoint = [585,460]
-# rightupperpoint = [695,460]
-# leftlowerpoint = [203,720]
-# rightlowerpoint = [1127,720]
     points = np.float32([[x_left_top, y_top], [x_right_top, y_top], [x_right_bot, y_bot], [x_left_bot, y_bot]])
     return points
 
