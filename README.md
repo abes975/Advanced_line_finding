@@ -29,6 +29,14 @@ The goals / steps of this project are the following:
 
 [video1]: ./project_video_out.mp4 "Video"
 
+### Here's the result (video)
+
+[![IMAGE ALT TEXT](http://img.youtube.com/vi/HqdTVlX3ytE/0.jpg)](https://youtu.be/HqdTVlX3ytE "Advanced Lane Finding")
+
+
+---
+
+
 ## [Rubric](https://review.udacity.com/#!/rubrics/571/view) Points
 
 ### Camera Calibration
@@ -137,14 +145,6 @@ The green area is the one incuded by the lines found.
 
 ---
 
-### Pipeline (video)
-
-Here's a Video!!
-
-https://youtu.be/HqdTVlX3ytE
-[![IMAGE ALT TEXT](http://img.youtube.com/vi/qdTVlX3ytE/0.jpg)](http://www.youtube.com/watch?v=qdTVlX3ytE "Advanced Lane Finding")
-
----
 
 ### Discussion
 
