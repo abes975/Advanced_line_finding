@@ -139,7 +139,10 @@ The green area is the one incuded by the lines found.
 
 ### Pipeline (video)
 
-Here's a ![Video][video1]
+Here's a Video!!
+
+https://youtu.be/HqdTVlX3ytE
+[![IMAGE ALT TEXT](http://img.youtube.com/vi/qdTVlX3ytE/0.jpg)](http://www.youtube.com/watch?v=qdTVlX3ytE "Advanced Lane Finding")
 
 ---
 
