@@ -31,7 +31,7 @@ The goals / steps of this project are the following:
 
 ### Here's the result (video)
 
-[![IMAGE ALT TEXT](http://img.youtube.com/vi/HqdTVlX3ytE/0.jpg)](https://youtu.be/HqdTVlX3ytE "Advanced Lane Finding")
+[![IMAGE ALT TEXT](http://img.youtube.com/vi/HqdTVlX3ytE/0.jpg)](https://youtu.be/HqdTVlX3ytE)
 
 
 ---
